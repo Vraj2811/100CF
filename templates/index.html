@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <form class="form-inline mt-3 mb-3" method="get" action="/">
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="city" class="sr-only">City</label>
+                <input type="text" class="form-control" id="city" name="city" placeholder="Enter city" required>
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Get Weather</button>
+        </form>
+
+        {% if weather_data %}
+        <h2>Weather in {{ weather_data['location']['name'] }}, {{ weather_data['location']['country'] }}</h2>
+        <p>Temperature: {{ weather_data['current']['temp_c'] }} °C</p>
+        <p>Condition: {{ weather_data['current']['condition']['text'] }}</p>
+        <p>Humidity: {{ weather_data['current']['humidity'] }}%</p>
+        <p>Wind Speed: {{ weather_data['current']['wind_kph'] }} kph</p>
+        {% endif %}
+
+        {% if forecast_data %}
+        <h2>3-Day Weather Forecast</h2>
+        <div class="card">
+            <div class="card-body">
+                <ul>
+                    {% for day in forecast_data %}
+                    <li>Day {{ loop.index }}: {{ day }} °C</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <form class="form-inline" method="post" action="{{ url_for('add_favorite') }}">
+            <input type="hidden" name="city" value="{{ weather_data['location']['name'] }}">
+            <button type="submit" class="btn btn-success">Add to Favorites</button>
+        </form>
+        {% endif %}
+
+        <h2 class="mt-5">Favorite Locations</h2>
+        <ul class="list-group">
+            {% for city in favorites %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ city }}
+                <a href="{{ url_for('index', city=city) }}" class="btn btn-primary btn-sm">Get Weather</a>
+                <a href="{{ url_for('remove_favorite', city=city) }}" class="btn btn-danger btn-sm">Remove</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
